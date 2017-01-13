@@ -11,6 +11,10 @@ This tool provisions your stack on ECS clusters. We can integrate this with CI-i
 5. For deploying consul-clusters, EC2 instances ( client and master ) need to have a common tag in order for consul-cluster to work
 6. Please visit dockerfiles directory for more information and take a look at the sample config files. 
 
+### Dependencies
+1. Boto3
+2. Python YAML lib
+
 
 ### Tool usage:
 
@@ -20,35 +24,16 @@ This tool provisions your stack on ECS clusters. We can integrate this with CI-i
 
 ## Arguments for managing GLP-services with ecs
 
-optional arguments:
 
-  -h, --help   show this help message and exit
- 
- 
-  -r REGION    OPTIONAL: Region. Default is us-east-2
-  
-  
-  -f CONFFILE  OPTIONAL: Config to pass for parsing. An individual file can be passed for one-off deployments.
-  
-  
-  -c COUNT     OPTIONAL: Count for scaling up or down, If not specified, will
-               be picked from update conf file
-               
-               
-  -v           OPTIONAL: Verbose flag
-  
-  
-  -e ENV       OPTIONAL: Target environment [ dev,qa,stage ]. Default is dev
-  
-  
-  --create     REQUIRED/EXCLUSIVE : Create a service from task definition
-  
-  
-  --update     REQUIRED/EXCLUSIVE : Update a service. [ task defs, container
-               count etc]
-               
-               
-  --delete     REQUIRED/EXCLUSIVE : Delete a service from specified cluster
+    -h, --help   show this help message and exit
+    -r REGION    OPTIONAL: Region. Default is us-east-2
+    -f CONFFILE  OPTIONAL: Config to pass for parsing. An individual file can be passed for one-off deployments.
+    -c COUNT     OPTIONAL: Count for scaling up or down, If not specified, wil be picked from update conf file
+    -v           OPTIONAL: Verbose flag
+    -e ENV       OPTIONAL: Target environment [ dev,qa,stage ]. Default is dev
+    --create     REQUIRED/EXCLUSIVE : Create a service from task definition
+    --update     REQUIRED/EXCLUSIVE : Update a service. [ task defs, container count etc]
+    --delete     REQUIRED/EXCLUSIVE : Delete a service from specified cluster
   
   
 
@@ -72,6 +57,8 @@ NOTE: Base directory is ${SCRIPT_DIR}/config/
 
 
 ### ------------------------------------------------------------------------------------------------------------
+### Example: 
+python 
 ### Example yaml:
 ```yaml
 # Yaml formate to manage entire lifcycle of containers
