@@ -1,10 +1,11 @@
--------------------------------------------------------------------------
 ECS orchestration
-:-
-  This tool provisions your stack on ECS clusters
-  Also packaged are dockerfiles for consul-client, consul-master and registrator
 
-Prereqs:
+  
+This tool provisions your stack on ECS clusters. We can integrate this with CI-instances or run via command-line to manage our ecs deployments. 
+
+Also packaged are dockerfiles for consul-client, consul-master and registrator
+
+Prereqs
 1. An ECS cluster containing minimum one instance
 2. Instances should have ECS agent along with docker running on instances
 3. Each containe is allocated 100 cpu cycles and 2G-hard/1G-soft memory by default. Instances should be capable enough to handle the requirements
@@ -14,8 +15,10 @@ Prereqs:
 
 
 Tool usage:
+
 usage: orchestrate.py [-h] [-r REGION] [-f CONFFILE] [-c COUNT] [-v]
                       [-e ENV] (--create | --update | --delete)
+
 
 Arguments for managing GLP-services with ecs
 
@@ -46,7 +49,6 @@ NOTE: Base directory is ${SCRIPT_DIR}/config/
 ------------------------------------------------------------------------------------------------------------
 Example yaml:
 
-#****************************************************************************************
 # Yaml formate to manage entire lifcycle of containers
 # We define four stages as of now viz:
 # 1. Tak registration
@@ -57,7 +59,7 @@ Example yaml:
 #      - Images are available in ECR repo or docker-hub
 #      - Cluster is up and running with container instances
 # More information : http://boto3.readthedocs.io/en/latest/reference/services/ecs.html
-# *****************************************************************************************
+
 containers:
   - appname: Test
     family: TEST
@@ -94,11 +96,11 @@ containers:
       - name: logs
         host:
           sourcePath: /var/log/apps/
-    # ***********************************************************************************************************
+
     # Service parameters will be used to create service
     # We can add load balancers alo if required.
     # Please visit : http://boto3.readthedocs.io/en/latest/reference/services/ecs.html#ECS.Client.create_service
-    # ***********************************************************************************************************
+
     serviceCreate:
       - cluster: applications-dev
         serviceName: test-service
