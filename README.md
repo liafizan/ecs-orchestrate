@@ -5,7 +5,7 @@ This tool provisions your stack on ECS clusters. We can integrate this with CI-i
 
 
 
-### Main files:
+### Modes:
 
 Script works in two different modes:
 
@@ -17,9 +17,9 @@ Script works in two different modes:
    
    
 
-NOTE: Base directory is ${SCRIPT_DIR}/config/
+# NOTE: Base directory is ${SCRIPT_DIR}/config/
 
-### Prereqs
+### Prereqs:
 1. An ECS cluster containing minimum one instance
 2. Instances should have ECS agent along with docker running on instances
 3. Each containe is allocated 100 cpu cycles and 2G-hard/1G-soft memory by default. Instances should be capable enough to handle the requirements
@@ -27,7 +27,7 @@ NOTE: Base directory is ${SCRIPT_DIR}/config/
 5. For deploying consul-clusters, EC2 instances ( client and master ) need to have a common tag in order for consul-cluster to work
 6. Please visit dockerfiles directory for more information and take a look at the sample config files. 
 
-### Dependencies
+### Dependencies:
 1. Boto3
 2. Python YAML lib
 
@@ -38,7 +38,7 @@ NOTE: Base directory is ${SCRIPT_DIR}/config/
 `usage: orchestrate.py [-h] [-r REGION] [-f CONFFILE] [-c COUNT] [-v] [-e ENV] (--create | --update | --delete)`
 
 
-## Arguments for managing GLP-services with ecs
+## Arguments for managing GLP-services with ecs:
 
 
     -h, --help   show this help message and exit
