@@ -1,10 +1,8 @@
-ECS orchestration
+# H1 ECS Container management
 
-This tool provisions your stack on ECS clusters. We can integrate this with CI-instances or run via command-line to manage our ecs deployments. 
+This tool provisions your stack on ECS clusters. We can integrate this with CI-instances or run via command-line to manage our ecs deployments. Also packaged are dockerfiles for consul-client, consul-master and registrator
 
-Also packaged are dockerfiles for consul-client, consul-master and registrator
-
-Prereqs
+# H4 Prereqs
 1. An ECS cluster containing minimum one instance
 2. Instances should have ECS agent along with docker running on instances
 3. Each containe is allocated 100 cpu cycles and 2G-hard/1G-soft memory by default. Instances should be capable enough to handle the requirements
@@ -13,7 +11,7 @@ Prereqs
 6. Please visit dockerfiles directory for more information and take a look at the sample config files. 
 
 
-Tool usage:
+# H$ Tool usage:
 
 
 usage: orchestrate.py [-h] [-r REGION] [-f CONFFILE] [-c COUNT] [-v]
