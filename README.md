@@ -17,7 +17,7 @@ Script works in two different modes:
    
    
 
-# NOTE: Base directory is ${SCRIPT_DIR}/config/
+#### NOTE: Base directory is ${SCRIPT_DIR}/config/
 
 ### Prereqs:
 1. An ECS cluster containing minimum one instance
