@@ -1,4 +1,5 @@
 ## ECS Container management
+### -----------------------
 
 This tool provisions your stack on ECS clusters. We can integrate this with CI-instances or run via command-line to manage our ecs deployments. Also packaged are dockerfiles for consul-client, consul-master and registrator
 
@@ -70,9 +71,9 @@ NOTE: Base directory is ${SCRIPT_DIR}/config/
 
 
 
-------------------------------------------------------------------------------------------------------------
-Example yaml:
-
+### ------------------------------------------------------------------------------------------------------------
+### Example yaml:
+`
 # Yaml formate to manage entire lifcycle of containers
 # We define four stages as of now viz:
 # 1. Tak registration
@@ -156,3 +157,4 @@ containers:
     serviceDelete:
       - cluster:  applications-dev
         serviceName: test-service
+`
