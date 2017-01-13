@@ -22,10 +22,9 @@ Script works in two different modes:
 ### Prereqs:
 1. An ECS cluster containing minimum one instance
 2. Instances should have ECS agent along with docker running on instances
-3. Each containe is allocated 100 cpu cycles and 2G-hard/1G-soft memory by default. Instances should be capable enough to handle the requirements
-4. If a service exists, it cannot be recreated to achieve idempotency. It has to be updated using update option
-5. For deploying consul-clusters, EC2 instances ( client and master ) need to have a common tag in order for consul-cluster to work
-6. Please visit dockerfiles directory for more information and take a look at the sample config files. 
+3. If a service exists, it cannot be recreated to achieve idempotency. It has to be updated using update option
+4. For deploying consul-clusters, EC2 instances ( client and master ) need to have a common tag in order for consul-cluster to work
+5. Please visit dockerfiles directory for more information and take a look at the sample config files. 
 
 ### Dependencies:
 1. Boto3
