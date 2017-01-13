@@ -1,6 +1,5 @@
 ECS orchestration
 
-  
 This tool provisions your stack on ECS clusters. We can integrate this with CI-instances or run via command-line to manage our ecs deployments. 
 
 Also packaged are dockerfiles for consul-client, consul-master and registrator
@@ -15,6 +14,7 @@ Prereqs
 
 
 Tool usage:
+
 
 usage: orchestrate.py [-h] [-r REGION] [-f CONFFILE] [-c COUNT] [-v]
                       [-e ENV] (--create | --update | --delete)
@@ -126,7 +126,7 @@ containers:
            maximumPercent: 200
            minimumHealthyPercent: 50
     # **********************************************************************
-    # Service dlete will be used to delete services where running count is 0
+    # Service delete will be used to delete services where running count is 0
     # Cannot be used via automated tools as it requires user confimration
     # **********************************************************************
     serviceDelete:
