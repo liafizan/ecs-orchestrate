@@ -73,7 +73,7 @@ NOTE: Base directory is ${SCRIPT_DIR}/config/
 
 ### ------------------------------------------------------------------------------------------------------------
 ### Example yaml:
-`
+```yaml
 # Yaml formate to manage entire lifcycle of containers
 # We define four stages as of now viz:
 # 1. Tak registration
@@ -110,8 +110,8 @@ containers:
             value: dev
           - name: CONF_HOME
             value: /opt/apps-java/config
-          # This environment variable is for registrator to identify service `
-          `- name: SERVICE_NAME
+          # This environment variable is for registrator to identify service
+          - name: SERVICE_NAME
             value: test
        dockerLabels:
            name: test-service-containers
