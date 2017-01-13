@@ -3,6 +3,22 @@
 
 This tool provisions your stack on ECS clusters. We can integrate this with CI-instances or run via command-line to manage our ecs deployments. Also packaged are dockerfiles for consul-client, consul-master and registrator
 
+
+
+### Main files:
+
+Script works in two different modes:
+
+
+   -  Single file : Specify individual config file name and service will be updated for one single file
+   
+   
+   -  Multiple files: Do not specify any file and any file in base directory will be processesed.
+   
+   
+
+NOTE: Base directory is ${SCRIPT_DIR}/config/
+
 ### Prereqs
 1. An ECS cluster containing minimum one instance
 2. Instances should have ECS agent along with docker running on instances
@@ -34,31 +50,12 @@ This tool provisions your stack on ECS clusters. We can integrate this with CI-i
     --create     REQUIRED/EXCLUSIVE : Create a service from task definition
     --update     REQUIRED/EXCLUSIVE : Update a service. [ task defs, container count etc]
     --delete     REQUIRED/EXCLUSIVE : Delete a service from specified cluster
-  
-  
-
-#### ----------------------------------------------------------------------------
-
-### Main files:
-
-Script works in two different modes:
-
-
-   -  Single file : Specify individual config file name and service will be updated for one single file
-   
-   
-   -  Multiple files: Do not specify any file and any file in base directory will be processesed.
-   
-   
-
-NOTE: Base directory is ${SCRIPT_DIR}/config/
-
-
-
 
 ### ------------------------------------------------------------------------------------------------------------
 ### Example: 
-python 
+     python orchestrate.py -e dev -f config/dev/test.yaml -v --create 
+    
+
 ### Example yaml:
 ```yaml
 # Yaml formate to manage entire lifcycle of containers
