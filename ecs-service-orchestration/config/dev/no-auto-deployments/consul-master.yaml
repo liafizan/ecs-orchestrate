@@ -1,0 +1,106 @@
+#****************************************************************************************
+# Yaml formate to manage entire lifcycle of containers
+# We define four stages as of now viz:
+# 1. Tak registration 
+# 2. Service creation 
+# 3. Service updates
+# 4. Service deletion
+# Assumption: 
+#      - Images are available in ECR repo or docker-hub
+#      - Cluster is up and running with container instances
+# More information : http://boto3.readthedocs.io/en/latest/reference/services/ecs.html
+# *****************************************************************************************
+containers:
+  - appname: Consul-master
+    family: CONSUL-MASTER
+    taskRoleArn: ''
+    networkMode: host
+    containerDefinitions:
+     - cpu: 10
+       memory: 80
+       portMappings:
+         - hostPort: 8300
+           containerPort: 8300
+           protocol: tcp
+         - hostPort: 8301
+           containerPort: 8301
+           protocol: tcp
+         - hostPort: 8301
+           containerPort: 8301
+           protocol: udp
+         - hostPort: 8302
+           containerPort: 8302
+           protocol: tcp
+         - hostPort: 8400
+           containerPort: 8400
+           protocol: tcp
+         - hostPort: 8500
+           containerPort: 8500
+           protocol: tcp
+         - hostPort: 8600
+           containerPort: 8600
+           protocol: udp
+       image: 953030164212.dkr.ecr.us-east-1.amazonaws.com/consul-master
+       privileged: False
+       name: consul-master
+       #command: ["agent","-server","-bind=$IP","-retry-join=10.4.3.41","-bootstrap-expect=2"]
+       essential: True
+       environment:
+         - name : SERVER_COUNT
+           value: '2'
+         - name: TAG_KEY
+           value: cluster
+         - name: TAG_VALUE
+           value: consul
+         - name: REGION
+           value: us-east-2
+         - name: CONSUL_LOCAL_CONFIG
+           value: '{"skip_leave_on_interrupt": true}'
+       mountPoints:
+       - sourceVolume: consul-data
+         containerPath: /consul/data
+         readOnly: False
+       dockerLabels:
+           name: consul-master-containers
+       dockerSecurityOptions:
+           - no-new-privileges
+    volumes:
+      - name: consul-data
+        host:
+          sourcePath: /opt/consul/data
+    # ***********************************************************************************************************
+    # Service parameters will be used to create service
+    # We can add load balancers alo if required.
+    # Please visit : http://boto3.readthedocs.io/en/latest/reference/services/ecs.html#ECS.Client.create_service
+    # ***********************************************************************************************************
+    serviceCreate:
+      - cluster: consul-master-cluster
+        serviceName: consulm-service
+        # Task definition is family:revision. 
+        # Creat service on latest revision and use update to roll back o deploy new version
+        taskDefinition: CONSUL-MASTER
+        desiredCount: 2
+        clientToken: consul-master-service
+        deploymentConfiguration:
+           maximumPercent: 200
+           minimumHealthyPercent: 50
+    # ******************************************************************
+    # Service Update parameters will be used to update running service 
+    # ******************************************************************
+    serviceUpdate:
+      - cluster: consul-master-cluster
+        serviceName: consulm-service
+        # Desired count also can be updated via commandlinee
+        desiredCount: 2
+        # Specify task def revision to roll back 
+        taskDefinition: CONSUL-MASTER
+        deploymentConfiguration:
+           maximumPercent: 200
+           minimumHealthyPercent: 50
+    # **********************************************************************
+    # Service dlete will be used to delete services where running count is 0 
+    # Cannot be used via automated tools as it requires user confimration
+    # **********************************************************************
+    serviceDelete:
+      - cluster:  consul-master-cluster 
+        serviceName: consulm-service

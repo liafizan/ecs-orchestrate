@@ -1,0 +1,79 @@
+#****************************************************************************************
+# Yaml formate to manage entire lifcycle of containers
+# We define four stages as of now viz:
+# 1. Tak registration 
+# 2. Service creation 
+# 3. Service updates
+# 4. Service deletion
+# Assumption: 
+#      - Images are available in ECR repo or docker-hub
+#      - Cluster is up and running with container instances
+# More information : http://boto3.readthedocs.io/en/latest/reference/services/ecs.html
+# *****************************************************************************************
+containers:
+  - appname: registrator
+    family: REGISTRATOR
+    taskRoleArn: ''
+    networkMode: host
+    containerDefinitions:
+     - cpu: 10
+       memory: 80
+       portMappings:
+       # Mapping ports for single service per instance 
+         - hostPort: 7000
+           containerPort: 7000
+       image: 953030164212.dkr.ecr.us-east-1.amazonaws.com/custom-registrator
+       name: registrator
+       privileged: False
+       command: 
+         - -cleanup
+         - -deregister=always
+       essential: True
+       mountPoints:
+       - sourceVolume: docker-socket
+         containerPath: /tmp/docker.sock
+         readOnly: False
+       dockerLabels:
+           name: regs-containers
+       dockerSecurityOptions:
+           - no-new-privileges
+    volumes:
+      - name: docker-socket
+        host:
+          sourcePath: /var/run/docker.sock
+    # ***********************************************************************************************************
+    # Service parameters will be used to create service
+    # We can add load balancers alo if required.
+    # Please visit : http://boto3.readthedocs.io/en/latest/reference/services/ecs.html#ECS.Client.create_service
+    # ***********************************************************************************************************
+    serviceCreate:
+      - cluster: applications-dev
+        serviceName: registrator-service
+        # Task definition is family:revision. 
+        # Creat service on latest revision and use update to roll back o deploy new version
+        taskDefinition: REGISTRATOR
+        desiredCount: 3
+        clientToken: regs-service
+        deploymentConfiguration:
+           maximumPercent: 200
+           minimumHealthyPercent: 50
+    # ******************************************************************
+    # Service Update parameters will be used to update running service 
+    # ******************************************************************
+    serviceUpdate:
+      - cluster: applications-dev
+        serviceName: registrator-service
+        # Desired count also can be updated via commandlinee
+        desiredCount: 3
+        # Specify task def revision to roll back 
+        taskDefinition: REGISTRATOR
+        deploymentConfiguration:
+           maximumPercent: 200
+           minimumHealthyPercent: 50
+    # **********************************************************************
+    # Service dlete will be used to delete services where running count is 0 
+    # Cannot be used via automated tools as it requires user confimration
+    # **********************************************************************
+    serviceDelete:
+      - cluster:  applications-dev 
+        serviceName: registrator-service
