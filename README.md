@@ -110,8 +110,8 @@ containers:
             value: dev
           - name: CONF_HOME
             value: /opt/apps-java/config
-          # This environment variable is for registrator to identify service
-          - name: SERVICE_NAME
+          # This environment variable is for registrator to identify service `
+          `- name: SERVICE_NAME
             value: test
        dockerLabels:
            name: test-service-containers
