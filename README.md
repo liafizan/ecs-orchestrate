@@ -54,6 +54,13 @@ NOTE: Base directory is ${SCRIPT_DIR}/config/
 ### ------------------------------------------------------------------------------------------------------------
 ### Example: 
      python orchestrate.py -e dev -f config/dev/test.yaml -v --create 
+     -- Will create desired services on ECS cluster printing information on console 
+     python orchestrate.py -e dev -f config/dev/test.yaml -v --update
+     -- Will update image for running containers
+     python orchestrate.py -e dev -f config/dev/test.yaml -v -c 10 --update
+     -- Will update count to 10 for containers given cluster has the capacity 
+     python orchestrate.py -e dev --create 
+     -- Will create services for .yaml files in config/dev directory 
     
 
 ### Example yaml:
