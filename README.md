@@ -51,15 +51,23 @@ optional arguments:
   
   
 
-----------------------------------------------------------------------------
+#### ----------------------------------------------------------------------------
 
-Main files:
+### Main files:
 
 Script works in two different modes:
+
+
    -  Single file : Specify individual config file name and service will be updated for one single file
+   
+   
    -  Multiple files: Do not specify any file and any file in base directory will be processesed.
+   
+   
 
 NOTE: Base directory is ${SCRIPT_DIR}/config/
+
+
 
 
 ------------------------------------------------------------------------------------------------------------
