@@ -1,8 +1,8 @@
-# H1 ECS Container management
+## ECS Container management
 
 This tool provisions your stack on ECS clusters. We can integrate this with CI-instances or run via command-line to manage our ecs deployments. Also packaged are dockerfiles for consul-client, consul-master and registrator
 
-# H4 Prereqs
+### Prereqs
 1. An ECS cluster containing minimum one instance
 2. Instances should have ECS agent along with docker running on instances
 3. Each containe is allocated 100 cpu cycles and 2G-hard/1G-soft memory by default. Instances should be capable enough to handle the requirements
@@ -11,27 +11,45 @@ This tool provisions your stack on ECS clusters. We can integrate this with CI-i
 6. Please visit dockerfiles directory for more information and take a look at the sample config files. 
 
 
-# H$ Tool usage:
+### Tool usage:
 
 
-usage: orchestrate.py [-h] [-r REGION] [-f CONFFILE] [-c COUNT] [-v]
-                      [-e ENV] (--create | --update | --delete)
+`usage: orchestrate.py [-h] [-r REGION] [-f CONFFILE] [-c COUNT] [-v] [-e ENV] (--create | --update | --delete)`
 
 
-Arguments for managing GLP-services with ecs
+## Arguments for managing GLP-services with ecs
 
 optional arguments:
+
   -h, --help   show this help message and exit
+ 
+ 
   -r REGION    OPTIONAL: Region. Default is us-east-2
+  
+  
   -f CONFFILE  OPTIONAL: Config to pass for parsing. An individual file can be passed for one-off deployments.
+  
+  
   -c COUNT     OPTIONAL: Count for scaling up or down, If not specified, will
                be picked from update conf file
+               
+               
   -v           OPTIONAL: Verbose flag
+  
+  
   -e ENV       OPTIONAL: Target environment [ dev,qa,stage ]. Default is dev
+  
+  
   --create     REQUIRED/EXCLUSIVE : Create a service from task definition
+  
+  
   --update     REQUIRED/EXCLUSIVE : Update a service. [ task defs, container
                count etc]
+               
+               
   --delete     REQUIRED/EXCLUSIVE : Delete a service from specified cluster
+  
+  
 
 ----------------------------------------------------------------------------
 
