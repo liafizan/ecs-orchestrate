@@ -4,7 +4,8 @@
 Main script which will call other modules based on requirements.
 @Author: Faizan ali
 TODO:
-Loggine setup
+Logging setup
+Lambda mode addition
 '''
 
 
