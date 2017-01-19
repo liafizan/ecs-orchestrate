@@ -28,7 +28,7 @@ Script works in two different modes:
 
 ### Dependencies:
 1. Boto3
-2. Python YAML lib
+2. Python YAML
 
 
 ### Tool usage:
