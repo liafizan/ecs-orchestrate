@@ -44,7 +44,7 @@ Script works in two different modes:
 `usage: orchestrate.py [-h] [-r REGION] [-f CONFFILE] [-c COUNT] [-v] [-e ENV] (--create | --update | --delete)`
 
 
-## Arguments for managing GLP-services with ecs:
+## Arguments for managing services with ecs:
 
 
     -h, --help   show this help message and exit
