@@ -1,7 +1,14 @@
 ## ECS Container management
 
 
-This tool provisions your stack on ECS clusters. We can integrate this with CI-instances or run via command-line to manage our ecs deployments. Also packaged are dockerfiles for consul-client, consul-master and registrator
+This tool provisions your stack on ECS clusters. We can integrate this with CI-instances or run via command-line to manage our ecs deployments. Also packaged are dockerfiles for consul-client, consul-master and registrator.
+
+### Why use this
+
+- Deploy an app to multiple ECS clusters 
+- Scale up or down your container instances 
+- Integrate with your CI environment for deployments
+- Manage container lifecycle ( create, update and delete ) 
 
 
 
