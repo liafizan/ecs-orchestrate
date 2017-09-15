@@ -4,7 +4,7 @@
 Main script which will call other modules based on requirements.
 @Author: Faizan ali
 TODO:
-Logging setup
+Loggine setup
 '''
 
 
@@ -197,6 +197,11 @@ def createService(mode,confFile,region,count,clusterName):
                   svcCreateResponse = client.create_service(cluster=svcCluster,serviceName=svcServiceName,taskDefinition=svcTaskDefinition,loadBalancers=svcloadBalancers,desiredCount=svcDesiredCount,clientToken=svcClientToken,deploymentConfiguration=svcdeploymentConfiguration)
                   createResponse=svcCreateResponse['ResponseMetadata']['HTTPStatusCode']
                   if createResponse == 200:
+                     # Setup autoscaling
+                     setupScalableTarget(mode,svcServiceName,svcCluster)
+                     setupServiceScaleoutMem(mode,svcServiceName,svcCluster)
+                     #setupServiceScaleoutCPU(mode,svcServiceName,svcCluster)
+                     setupServiceScalein(mode,svcServiceName,svcCluster)
                      # verbose
                      if mode:
                         print createResponse
@@ -209,7 +214,193 @@ def createService(mode,confFile,region,count,clusterName):
                      print e
                      print "Service creation failed"
                      print "Response::: %s " % (failedResponseCode)
+                     setupScalableTarget(mode,svcServiceName,svcCluster)
                   return failedResponseCode
+
+def setupScalableTarget(mode,serviceName,clusterName,roleArn="arn:aws:iam::953030164212:role/ecs-application-autoscale"):
+    """Function to setup scalable target"""
+    client = boto3.client('application-autoscaling',region_name=region)
+    response = client.register_scalable_target(
+      MaxCapacity=5,
+      MinCapacity=2,
+      ResourceId="service/"+clusterName+"/"+serviceName,
+      RoleARN=roleArn,
+      ScalableDimension='ecs:service:DesiredCount',
+      ServiceNamespace='ecs',
+    )
+    #if mode:
+        #print response
+def setupServiceScaleoutMem(mode,serviceName,clusterName,roleArn="arn:aws:iam::953030164212:role/ecs-application-autoscale"):
+    """Function to setup scaling policies target"""
+    client = boto3.client('application-autoscaling',region_name=region)
+    response = client.put_scaling_policy(
+      PolicyName=serviceName+'-High-Memory',
+      PolicyType='StepScaling',
+      ResourceId="service/"+clusterName+"/"+serviceName,
+      ScalableDimension='ecs:service:DesiredCount',
+      ServiceNamespace='ecs',
+      StepScalingPolicyConfiguration={
+          'AdjustmentType': 'ChangeInCapacity',
+          'Cooldown': 60,
+          'StepAdjustments': [
+                {
+                  'MetricIntervalLowerBound': 0,
+                  'ScalingAdjustment': 1,
+                 },
+              ],
+          }
+      )
+
+
+    print ("Response from func %s ") % (response)
+    print(json.dumps(response))
+    for k,v in response.iteritems():
+         print "key: %s , values: %s " %(k,v)
+         if k == "PolicyARN":
+            policyArnValue=v
+
+    setupHighMemAlarm(serviceName,clusterName,policyArnValue)
+def setupServiceScaleoutCPU(mode,serviceName,clusterName,roleArn="arn:aws:iam::953030164212:role/ecs-application-autoscale"):
+    """Function to setup scaling policies target"""
+    client = boto3.client('application-autoscaling',region_name=region)
+    response = client.put_scaling_policy(
+      PolicyName=serviceName+'-High-CPU',
+      PolicyType='StepScaling',
+      ResourceId="service/"+clusterName+"/"+serviceName,
+      ScalableDimension='ecs:service:DesiredCount',
+      ServiceNamespace='ecs',
+      StepScalingPolicyConfiguration={
+          'AdjustmentType': 'ChangeInCapacity',
+          'Cooldown': 60,
+          'StepAdjustments': [
+                {
+                  'MetricIntervalLowerBound': 0,
+                  'ScalingAdjustment': 1,
+                 },
+              ],
+          }
+      )
+
+
+    print ("Response from func %s ") % (response)
+    print(json.dumps(response))
+    for k,v in response.iteritems():
+         print "key: %s , values: %s " %(k,v)
+         if k == "PolicyARN":
+            policyArnValue=v
+
+    #setupHighCPUAlarm(serviceName,clusterName,policyArnValue)
+def setupServiceScalein(mode,serviceName,clusterName,roleArn="arn:aws:iam::953030164212:role/ecs-application-autoscale"):
+    """Function to setup scaling policies target"""
+    client = boto3.client('application-autoscaling',region_name=region)
+    response = client.put_scaling_policy(
+      PolicyName=serviceName+'-Low-Memory',
+      PolicyType='StepScaling',
+      ResourceId="service/"+clusterName+"/"+serviceName,
+      ScalableDimension='ecs:service:DesiredCount',
+      ServiceNamespace='ecs',
+      StepScalingPolicyConfiguration={
+          'AdjustmentType': 'ChangeInCapacity',
+          'Cooldown': 60,
+          'StepAdjustments': [
+                {
+                  'MetricIntervalUpperBound': 0,
+                  'ScalingAdjustment': -1,
+                 },
+              ],
+          }
+      )
+
+
+    print ("Response from func %s ") % (response)
+    print(json.dumps(response))
+    for k,v in response.iteritems():
+         print "key: %s , values: %s " %(k,v)
+         if k == "PolicyARN":
+            policyArnValue=v
+
+    setupLowMemAlarm(serviceName,clusterName,policyArnValue)
+def setupHighMemAlarm(serviceName,clusterName,Arn):
+    client = boto3.client('cloudwatch')
+    response = client.put_metric_alarm(
+      AlarmName=serviceName+'-HighMemory-Alarm',
+      ComparisonOperator='GreaterThanThreshold',
+      EvaluationPeriods=2,
+      MetricName='MemoryUtilization',
+      Namespace='AWS/ECS',
+      Period=60,
+      Statistic='Average',
+      Threshold=70,
+      ActionsEnabled=True,
+      AlarmActions=[
+        Arn
+      ],
+      AlarmDescription='Alarm when server Memory exceeds 70%',
+      Dimensions=[
+          {
+            'Name': 'ClusterName',
+            'Value': clusterName
+          },
+          {
+            'Name': 'ServiceName',
+            'Value': serviceName
+          },
+      ],
+   )
+def setupHighCPUAlarm(serviceName,clusterName,Arn):
+    client = boto3.client('cloudwatch')
+    response = client.put_metric_alarm(
+      AlarmName=serviceName+'-HighCPU-Alarm',
+      ComparisonOperator='GreaterThanThreshold',
+      EvaluationPeriods=2,
+      MetricName='CPUUtilization',
+      Namespace='AWS/ECS',
+      Period=60,
+      Statistic='Average',
+      Threshold=70,
+      ActionsEnabled=True,
+      AlarmActions=[
+        Arn
+      ],
+      AlarmDescription='Alarm when server CPU exceeds 70%',
+      Dimensions=[
+          {
+            'Name': 'ClusterName',
+            'Value': clusterName
+          },
+          {
+            'Name': 'ServiceName',
+            'Value': serviceName
+          },
+      ],
+   )
+def setupLowMemAlarm(serviceName,clusterName,Arn):
+    client = boto3.client('cloudwatch')
+    response = client.put_metric_alarm(
+      AlarmName=serviceName+'-LowMemory-Alarm',
+      ComparisonOperator='LessThanThreshold',
+      EvaluationPeriods=2,
+      MetricName='MemoryUtilization',
+      Namespace='AWS/ECS',
+      Period=60,
+      Statistic='Average',
+      Threshold=50,
+      ActionsEnabled=True,
+      AlarmActions=[
+        Arn
+      ],
+      AlarmDescription='Alarm when server Memory is less than 50%',
+      Dimensions=[
+          {
+            'Name': 'ClusterName',
+            'Value': clusterName
+          },
+          {
+            'Name': 'ServiceName',
+            'Value': serviceName
+          },
+      ],
+   )
 
 def main(mode,confFile,region,count,action):
     """Function to manage muliple clusters for a single service situation as in consul client"""
