@@ -200,7 +200,7 @@ def createService(mode,confFile,region,count,clusterName):
                      # Setup autoscaling
                      setupScalableTarget(mode,svcServiceName,svcCluster)
                      setupServiceScaleoutMem(mode,svcServiceName,svcCluster)
-                     #setupServiceScaleoutCPU(mode,svcServiceName,svcCluster)
+                     setupServiceScaleoutCPU(mode,svcServiceName,svcCluster)
                      setupServiceScalein(mode,svcServiceName,svcCluster)
                      # verbose
                      if mode:
@@ -289,7 +289,7 @@ def setupServiceScaleoutCPU(mode,serviceName,clusterName,roleArn="arn:aws:iam::9
          if k == "PolicyARN":
             policyArnValue=v
 
-    #setupHighCPUAlarm(serviceName,clusterName,policyArnValue)
+    setupHighCPUAlarm(serviceName,clusterName,policyArnValue)
 def setupServiceScalein(mode,serviceName,clusterName,roleArn="arn:aws:iam::953030164212:role/ecs-application-autoscale"):
     """Function to setup scaling policies target"""
     client = boto3.client('application-autoscaling',region_name=region)
